@@ -8,3 +8,8 @@
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
 vim.g.root_spec = { "cwd" }
+
+vim.cmd([[
+  autocmd FileType aerial resize +10
+  autocmd FileType trouble resize +10
+]])
