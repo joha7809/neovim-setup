@@ -2,7 +2,19 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
-vim.opt.expandtab = true -- Use tabs, not spaces
-vim.opt.shiftwidth = 4 -- Indent width
-vim.opt.tabstop = 4 -- Number of spaces a tab counts for
-vim.opt.softtabstop = 4 -- How many spaces to insert/delete when editing with tabs
+-- Default: use spaces
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 2
+
+-- Use tabs (not spaces) for specific languages
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "java", "python" }, -- add more if needed
+  callback = function()
+    vim.opt_local.expandtab = false -- Use tabs
+    vim.opt_local.shiftwidth = 4 -- Indent width
+    vim.opt_local.tabstop = 4 -- Visual width of a tab
+    vim.opt_local.softtabstop = 4 -- Tab insert/delete width
+  end,
+})
