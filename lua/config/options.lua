@@ -12,9 +12,14 @@ vim.opt.softtabstop = 2
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "java", "python" }, -- add more if needed
   callback = function()
-    vim.opt_local.expandtab = false -- Use tabs
+    vim.opt_local.expandtab = true -- Use spaces for vscode
     vim.opt_local.shiftwidth = 4 -- Indent width
     vim.opt_local.tabstop = 4 -- Visual width of a tab
     vim.opt_local.softtabstop = 4 -- Tab insert/delete width
   end,
 })
+
+-- ~/.config/nvim/lua/config/options.lua
+-- Maybe use basedpyright someday...
+vim.g.lazyvim_python_lsp = "pyright" -- use Pyright :contentReference[oaicite:4]{index=4}
+vim.g.lazyvim_python_ruff = "ruff_lsp" -- use Ruff as LSP :contentReference[oaicite:5]{index=5}
