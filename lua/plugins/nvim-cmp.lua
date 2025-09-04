@@ -93,7 +93,8 @@ return {
         -- Add icons to the completion menu.
         formatting = {
           completion = {
-            autocomplete = false, --Suggstion only when requested
+            -- autocomplete = false, --Suggstion only when requested
+            autocomplete = { require("cmp.types").cmp.TriggerEvent.TextChanged },
           },
           format = function(_, vim_item)
             vim_item.kind = (symbol_kinds[vim_item.kind] or "") .. "  " .. vim_item.kind

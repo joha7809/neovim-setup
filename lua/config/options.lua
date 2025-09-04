@@ -19,7 +19,19 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- Disable auto formatting
+-- vim.g.autoformat = false
+
 -- ~/.config/nvim/lua/config/options.lua
 -- Maybe use basedpyright someday...
 vim.g.lazyvim_python_lsp = "pyright" -- use Pyright :contentReference[oaicite:4]{index=4}
 vim.g.lazyvim_python_ruff = "ruff_lsp" -- use Ruff as LSP :contentReference[oaicite:5]{index=5}
+
+vim.filetype.add({
+  filename = {
+    ["docker-compose.yml"] = "yaml.docker-compose",
+    ["docker-compose.yaml"] = "yaml.docker-compose",
+    ["compose.yml"] = "yaml.docker-compose",
+    ["compose.yaml"] = "yaml.docker-compose",
+  },
+})
