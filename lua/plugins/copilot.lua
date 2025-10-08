@@ -63,20 +63,20 @@ return {
       end
 
       -- initially allow suggestions
-      set_trigger(true)
+      set_trigger(false)
 
-      -- hide Copilot when cmp menu opens
-      cmp.event:on("menu_opened", function()
-        if copilot.is_visible() then
-          copilot.dismiss()
-        end
-        set_trigger(false)
-      end)
-
-      -- re-enable Copilot after cmp menu closes
-      cmp.event:on("menu_closed", function()
-        set_trigger(not luasnip.expand_or_locally_jumpable())
-      end)
+      -- -- hide Copilot when cmp menu opens
+      -- cmp.event:on("menu_opened", function()
+      --   if copilot.is_visible() then
+      --     copilot.dismiss()
+      --   end
+      --   set_trigger(false)
+      -- end)
+      --
+      -- -- re-enable Copilot after cmp menu closes
+      -- cmp.event:on("menu_closed", function()
+      --   set_trigger(not luasnip.expand_or_locally_jumpable())
+      -- end)
 
       -- disable Copilot inside snippets
       vim.api.nvim_create_autocmd("User", {

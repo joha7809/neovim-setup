@@ -102,9 +102,9 @@ return {
           end,
         },
         snippet = {
-          expand = function(args)
-            luasnip.lsp_expand(args.body)
-          end,
+          -- expand = function(args)
+          --   luasnip.lsp_expand(args.body)
+          -- end,
         },
         window = {
           -- Make the completion menu bordered.
