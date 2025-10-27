@@ -1,54 +1,47 @@
+-- lua/plugins/sourcekit.lua
+local util = require("lspconfig.util")
+
 return {
   {
     "neovim/nvim-lspconfig",
-    init = function()
-      local group = vim.api.nvim_create_augroup("swift_lsp_force", { clear = true })
+    -- use opts function so we merge into LazyVim's default opts (on_attach, capabilities, etc.)
+    opts = function(_, opts)
+      opts.servers = opts.servers or {}
 
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = "swift",
-        group = group,
-        callback = function(args)
-          local bufnr = args.buf
-          local lspconfig = require("lspconfig")
-          local util = require("lspconfig.util")
+      -- Add/override a server entry for sourcekit (name 'sourcekit' is conventional)
+      opts.servers.sourcekit = {
+        mason = false, -- don't let mason manage it
+        cmd = { "/usr/bin/sourcekit-lsp" }, -- or just "sourcekit-lsp" if on PATH
+        filetypes = { "swift" },
+        root_dir = util.root_pattern("Package.swift", ".git"),
+        single_file_support = true,
+        -- any server-specific settings can go here
+        -- settings = { ... },
+      }
 
-          local root = vim.fs.dirname(
-            vim.fs.find(
-              { "Package.swift", ".git" },
-              { upward = true, path = vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)) }
-            )[1]
-          ) or vim.fn.getcwd()
+      -- If we need to create an lspconfig.configs entry for 'sourcekit', do it in setup
+      opts.setup = opts.setup or {}
+      opts.setup.sourcekit = function(server_name, server_opts)
+        local lspconfig = require("lspconfig")
+        local configs = require("lspconfig.configs")
 
-          -- Prevent multiple clients
-          for _, client in pairs(vim.lsp.get_active_clients({ bufnr = bufnr })) do
-            if client.name == "sourcekit-lsp" then
-              return
-            end
-          end
+        -- Create config object only if it's missing
+        if not configs[sourcekit] and not configs["sourcekit"] then
+          configs["sourcekit"] = {
+            default_config = {
+              cmd = server_opts.cmd,
+              filetypes = server_opts.filetypes,
+              root_dir = server_opts.root_dir or util.path.dirname(vim.fn.getcwd()),
+              settings = server_opts.settings or {},
+              single_file_support = server_opts.single_file_support,
+            },
+          }
+        end
 
-          -- Start the client manually
-          local client_id = vim.lsp.start({
-            name = "sourcekit-lsp",
-            cmd = { "/usr/bin/sourcekit-lsp" },
-            root_dir = root,
-          })
-
-          if client_id then
-            vim.lsp.buf_attach_client(bufnr, client_id)
-
-            -- Minimal keymaps
-            local opts = { noremap = true, silent = true, buffer = bufnr }
-            vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-            vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-            vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-            vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, opts)
-
-            vim.notify("[Swift LSP] attached at " .. root, vim.log.levels.INFO)
-          else
-            vim.notify("[Swift LSP] failed to attach", vim.log.levels.ERROR)
-          end
-        end,
-      })
+        -- Use normal lspconfig setup so LazyVim's on_attach / capabilities are used
+        lspconfig["sourcekit"].setup(server_opts)
+        return true -- signal: we handled the setup
+      end
     end,
   },
 }

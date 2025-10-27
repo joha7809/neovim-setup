@@ -81,6 +81,17 @@ return {
     config = function()
       local cmp = require("cmp")
       local luasnip = require("luasnip")
+      local types = require("cmp.types")
+
+      -- 👇 Add this function here (belongs to cmp)
+      local function deprioritize_snippet(entry1, entry2)
+        if entry1:get_kind() == types.lsp.CompletionItemKind.Snippet then
+          return false
+        end
+        if entry2:get_kind() == types.lsp.CompletionItemKind.Snippet then
+          return true
+        end
+      end
 
       -- Inside a snippet, use backspace to remove the placeholder.
       vim.keymap.set("s", "<BS>", "<C-O>s")
@@ -158,12 +169,26 @@ return {
         }),
         sources = cmp.config.sources({
           -- { name = "copilot" },
-          { name = "nvim_lsp" },
-          { name = "luasnip" },
-          { name = "crates" },
+          { name = "nvim_lsp", priority = 1000 },
+          { name = "crates", priority = 900 },
         }, {
-          { name = "buffer" },
+          { name = "buffer", priority = 500 },
+          { name = "luasnip", priority = 200 },
         }),
+        sorting = {
+          comparators = {
+            deprioritize_snippet, -- custom: snippets last
+            cmp.config.compare.offset,
+            cmp.config.compare.exact,
+            cmp.config.compare.score,
+            cmp.config.compare.recently_used,
+            cmp.config.compare.locality,
+            cmp.config.compare.kind,
+            cmp.config.compare.sort_text,
+            cmp.config.compare.length,
+            cmp.config.compare.order,
+          },
+        },
       })
       ---@diagnostic enable: missing-fields
     end,

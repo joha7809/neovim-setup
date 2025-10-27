@@ -41,6 +41,18 @@ return {
         silent = true,
         desc = "Toggle GitHub Copilot",
       },
+      {
+        "<leader>at",
+        -- toggle auto_trigger
+        function()
+          vim.b.copilot_suggestion_auto_trigger = not vim.b.copilot_suggestion_auto_trigger
+          if vim.b.copilot_suggestion_auto_trigger then
+            vim.notify("Copilot auto-trigger enabled", vim.log.levels.INFO)
+          else
+            vim.notify("Copilot auto-trigger disabled", vim.log.levels.INFO)
+          end
+        end,
+      },
     },
     config = function(_, opts)
       local cmp = require("cmp")
