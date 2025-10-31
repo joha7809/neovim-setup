@@ -131,7 +131,7 @@ return {
           ["<C-f>"] = cmp.mapping.scroll_docs(4),
           ["<CR>"] = cmp.mapping.confirm({
             behavior = cmp.ConfirmBehavior.Replace,
-            select = true,
+            select = false,
           }),
           -- Explicitly request completions.
           ["<C-Space>"] = cmp.mapping.complete(),
